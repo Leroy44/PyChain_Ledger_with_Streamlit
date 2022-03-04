@@ -45,27 +45,15 @@ import hashlib
 # 5. Add an attribute named `amount` of type `float`.
 # Note that you’ll use this new `Record` class as the data type of your `record` attribute in the next section.
 
-
-# @TODO
 # Create a Record Data Class that consists of the `sender`, `receiver`, and
 # `amount` attributes
 
-@dataclass 
+# add dataclass decoder and define new class 'Record' with attributes (sender, receiver, amount)
+@dataclass
 class Record:
-    """A class used to represent the data or the record inside of a block
-    
-    Attributes:
-    sender : str
-        a  string to identify the sender
-    receiver : str
-        a  string to identify the receiver
-    amount : float
-        a  float to identify the amount of the record
-    """
-    sender: str 
+    sender: str
     receiver: str
     amount: float
-
 
 ################################################################################
 # Step 2:
@@ -83,22 +71,8 @@ class Block:
 
     # @TODO
     # Rename the `data` attribute to `record`, and set the data type to `Record`
-    
-    """A Block class help us identify the data in the blockchain.
-    
-    Attributes:
-    record : Record
-        is record of the hash or block.
-    creator_id : int
-        an integer to identify the creator's ID.
-    timestamp : str
-        a str to identify the date/time the block is created in UTC format.
-    nonce: str
-        the number added to the hash or block, it's also called the "number only used once".
-    """
-
     record: Record
-
+        
     creator_id: int
     prev_hash: str = 0
     timestamp: str = datetime.datetime.utcnow().strftime("%H:%M:%S")
@@ -165,8 +139,7 @@ class PyChain:
 ################################################################################
 # Streamlit Code
 
-# Adds the cache decorator for Streamlit
-
+# Add the cache decorator for Streamlit
 
 @st.cache(allow_output_mutation=True)
 def setup():
@@ -193,32 +166,27 @@ pychain = setup()
 # 4. Add an input area where you can get a value for `amount` from the user.
 # 5. As part of the Add Block button functionality, update `new_block` so that `Block` consists of an attribute named `record`, which is set equal to a `Record` that contains the `sender`, `receiver`, and `amount` values. The updated `Block`should also include the attributes for `creator_id` and `prev_hash`.
 
-# @TODO:
 # Delete the `input_data` variable from the Streamlit interface.
-input_data = st.text_input("Block Data")
+#input_data = st.text_input("Block Data")
 
-# @TODO:
 # Add an input area where you can get a value for `sender` from the user.
-sender = st.text_input("Sender")
+sender = st.text_input("Input Sender: ")
 
-# @TODO:
 # Add an input area where you can get a value for `receiver` from the user.
-receiver = st.text_input("Receiver")
+receiver = st.text_input("Input Receiver: ")
 
-# @TODO:
 # Add an input area where you can get a value for `amount` from the user.
-amount = st.text_input("Amount")
+amount = st.text_input("Input amount: ")
 
 if st.button("Add Block"):
     prev_block = pychain.chain[-1]
     prev_block_hash = prev_block.hash_block()
 
-    # @TODO
     # Update `new_block` so that `Block` consists of an attribute named `record`
     # which is set equal to a `Record` that contains the `sender`, `receiver`,
     # and `amount` values
     new_block = Block(
-        data=input_data,
+        record=Record(sender=sender, receiver=receiver, amount=amount),
         creator_id=42,
         prev_hash=prev_block_hash
     )
@@ -231,7 +199,7 @@ if st.button("Add Block"):
 
 st.markdown("## The PyChain Ledger")
 
-pychain_df = pd.DataFrame(pychain.chain).astype(str)
+pychain_df = pd.DataFrame(pychain.chain)
 st.write(pychain_df)
 
 difficulty = st.sidebar.slider("Block Difficulty", 1, 5, 2)
